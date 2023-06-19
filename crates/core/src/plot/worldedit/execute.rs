@@ -135,7 +135,7 @@ pub(super) fn execute_count(ctx: CommandExecuteContext<'_>) {
     ));
 }
 
-pub(super) fn execute_copy(mut ctx: CommandExecuteContext<'_>) {
+pub(super) fn execute_copy(ctx: CommandExecuteContext<'_>) {
     let start_time = Instant::now();
 
     let origin = ctx.player.pos.block_pos();
@@ -153,7 +153,7 @@ pub(super) fn execute_copy(mut ctx: CommandExecuteContext<'_>) {
     ));
 }
 
-pub(super) fn execute_cut(mut ctx: CommandExecuteContext<'_>) {
+pub(super) fn execute_cut(ctx: CommandExecuteContext<'_>) {
     let start_time = Instant::now();
 
     let first_pos = ctx.player.first_position.unwrap();
@@ -255,7 +255,7 @@ pub(super) fn execute_paste(ctx: CommandExecuteContext<'_>) {
 static SCHEMATI_VALIDATE_REGEX: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"[a-zA-Z0-9_.]+\.schem(atic)?").unwrap());
 
-pub(super) fn execute_load(mut ctx: CommandExecuteContext<'_>) {
+pub(super) fn execute_load(ctx: CommandExecuteContext<'_>) {
     let start_time = Instant::now();
 
     let mut file_name = ctx.arguments[0].unwrap_string().clone();
@@ -547,7 +547,7 @@ pub(super) fn execute_shift(ctx: CommandExecuteContext<'_>) {
     player.send_worldedit_message(&format!("Region shifted {} block(s).", amount));
 }
 
-pub(super) fn execute_flip(mut ctx: CommandExecuteContext<'_>) {
+pub(super) fn execute_flip(ctx: CommandExecuteContext<'_>) {
     let start_time = Instant::now();
 
     let direction = ctx.arguments[0].unwrap_direction();
@@ -628,7 +628,7 @@ pub(super) fn execute_flip(mut ctx: CommandExecuteContext<'_>) {
     ));
 }
 
-pub(super) fn execute_rotate(mut ctx: CommandExecuteContext<'_>) {
+pub(super) fn execute_rotate(ctx: CommandExecuteContext<'_>) {
     let start_time = Instant::now();
     let rotate_amt = ctx.arguments[0].unwrap_uint();
     let rotate_amt = match rotate_amt % 360 {
