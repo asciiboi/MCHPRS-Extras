@@ -491,6 +491,82 @@ impl Plot {
                 let slot = 36 + self.players[player].selected_slot;
                 self.players[player].set_inventory_slot(slot, Some(item));
             }
+            "/bin" => {
+                if args.len() != 1 {
+                    self.players[player].send_error_message("Usage: /bin [number]");
+                    return false;
+                }
+                let number: i32 = if let Ok(p) = args[0].parse() {
+                    p
+                } else {
+                    self.players[player].send_error_message("Unable to parse number!");
+                    return false;
+                };
+
+                self.players[player].send_info_message(format!("{:#010b}", number).as_str())
+            }
+            "/hex" => {
+                if args.len() != 1 {
+                    self.players[player].send_error_message("Usage: /hex [number]");
+                    return false;
+                }
+                let number: i32 = if let Ok(p) = args[0].parse() {
+                    p
+                } else {
+                    self.players[player].send_error_message("Unable to parse number!");
+                    return false;
+                };
+
+                self.players[player].send_info_message(format!("{:#04X}", number).as_str())
+            }
+            "/dec" => {
+                if args.len() != 1 {
+                    self.players[player].send_error_message("Usage: /dec [number]");
+                    self.players[player].send_system_message("Example:");
+                    self.players[player].send_system_message("    /dec 0b0010 -> 2");
+                    self.players[player].send_system_message("    /dec 0xFF -> 255");
+                    return false;
+                }
+                let input = args[0].to_string();
+                let sign: &str = match input.get(0..2) {
+                    Some(v) => v,
+                    None => {
+                        self.players[player].send_error_message("ERROR");
+                        return false
+                    }
+                };
+                let data: &str = match input.get(2..) {
+                    Some(v) => v,
+                    None => {
+                        self.players[player].send_error_message("ERROR");
+                        return false
+                    }
+                };
+                let base: u32 = match sign.to_lowercase().as_str() {
+                    "0b" => {
+                        2
+                    },
+                    "0x" => {
+                        16
+
+                    },
+                    _ => {
+                        self.players[player].send_error_message("Invalid sign.");
+                        return false
+                    }
+                };
+
+                let value = match i32::from_str_radix(data, base) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        self.players[player].send_error_message("Unable to convert.");
+                        return false
+                    }
+                };
+                self.players[player].send_info_message(format!("{}", value).as_str());
+                return true;
+
+            }
             _ => self.players[player].send_error_message("Command not found!"),
         }
         false
@@ -520,7 +596,7 @@ pub static DECLARE_COMMANDS: LazyLock<PacketEncoder> = LazyLock::new(|| {
                 flags: CommandFlags::ROOT.bits() as i8,
                 children: &[
                     1, 4, 5, 6, 11, 12, 14, 16, 18, 19, 20, 21, 22, 23, 24, 26, 29, 31, 32, 34, 36,
-                    47, 49, 53, 60, 61, 63,
+                    47, 49, 53, 60, 61, 63, 65, 67, 69
                 ],
                 redirect_node: None,
                 name: None,
@@ -1106,6 +1182,60 @@ pub static DECLARE_COMMANDS: LazyLock<PacketEncoder> = LazyLock::new(|| {
                 parser: Some(Parser::String(0)),
                 suggestions_type: Some("minecraft:ask_server"),
             },
+            // 65: /bin
+            Node {
+                flags: (CommandFlags::LITERAL).bits() as i8,
+                children: &[66],
+                redirect_node: None,
+                name: Some("bin"),
+                parser: None,
+                suggestions_type: None,
+            },
+            // 66: /bin [number]
+            Node {
+                flags: (CommandFlags::ARGUMENT | CommandFlags::EXECUTABLE).bits() as i8,
+                children: &[],
+                redirect_node: None,
+                name: Some("number"),
+                parser: Some(Parser::Integer(0, i32::MAX)),
+                suggestions_type: None,
+            },
+            // 67: /bin
+            Node {
+                flags: (CommandFlags::LITERAL).bits() as i8,
+                children: &[68],
+                redirect_node: None,
+                name: Some("hex"),
+                parser: None,
+                suggestions_type: None,
+            },
+            // 68: /bin [number]
+            Node {
+                flags: (CommandFlags::ARGUMENT | CommandFlags::EXECUTABLE).bits() as i8,
+                children: &[],
+                redirect_node: None,
+                name: Some("number"),
+                parser: Some(Parser::Integer(0, i32::MAX)),
+                suggestions_type: None,
+            },
+            // 69: /dec
+            Node {
+                flags: (CommandFlags::LITERAL).bits() as i8,
+                children: &[70],
+                redirect_node: None,
+                name: Some("dec"),
+                parser: None,
+                suggestions_type: None,
+            },
+            // 70: /dec [number]
+            Node {
+                flags: (CommandFlags::ARGUMENT | CommandFlags::EXECUTABLE).bits() as i8,
+                children: &[],
+                redirect_node: None,
+                name: Some("number"),
+                parser: Some(Parser::String(0)),
+                suggestions_type: None,
+            }
         ],
         root_index: 0,
     }

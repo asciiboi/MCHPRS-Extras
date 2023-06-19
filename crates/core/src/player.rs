@@ -573,6 +573,16 @@ pub trait PacketSender {
             .to_string(),
         );
     }
+    /// Sends the player a white system message (`message` is not in json format)
+    fn send_info_message(&self, message: &str) {
+        self.send_raw_system_message(
+            json!({
+                "text": message,
+                "color": "white"
+            })
+            .to_string(),
+        );
+    }
 }
 
 impl PacketSender for PlayerPacketSender {
