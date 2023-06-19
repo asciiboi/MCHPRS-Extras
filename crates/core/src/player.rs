@@ -3,6 +3,7 @@ use crate::config::CONFIG;
 use crate::permissions::{self, PlayerPermissionsCache};
 use crate::plot::worldedit::{WorldEditClipboard, WorldEditUndo};
 use crate::plot::PLOT_SCALE;
+use crate::server::Message;
 use crate::utils::HyphenatedUUID;
 use byteorder::{BigEndian, ReadBytesExt};
 use mchprs_blocks::block_entities::{ContainerType, InventoryEntry};
@@ -579,6 +580,16 @@ pub trait PacketSender {
             json!({
                 "text": message,
                 "color": "white"
+            })
+            .to_string(),
+        );
+    }
+    /// Sends the player a system message with the specified color (`message` is not in json format)
+    fn send_colored_message(&self, message: &str, color: &str) {
+        self.send_raw_system_message(
+            json!({
+                "text": message,
+                "color": color
             })
             .to_string(),
         );
