@@ -558,7 +558,7 @@ impl Plot {
 
                 let value = match i32::from_str_radix(data, base) {
                     Ok(v) => v,
-                    Err(e) => {
+                    Err(_e) => {
                         self.players[player].send_error_message("Unable to convert.");
                         return false
                     }
