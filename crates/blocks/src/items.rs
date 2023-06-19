@@ -42,6 +42,10 @@ impl ItemStack {
                 });
 
                 nbt::Blob::with_content(map! {
+                    "display" => nbt::Value::Compound(map! {
+                        "Name" => nbt::Value::String(format!("{{\"text\": \"Strength {}\", \"italic\":false, \"color\": \"red\"}}",ss).to_string())
+                        
+                    }),
                     "BlockEntityTag" => nbt::Value::Compound(map! {
                         "Items" => list,
                         "Id" => nbt::Value::String(container_ty.to_string())

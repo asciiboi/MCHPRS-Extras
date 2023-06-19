@@ -21,6 +21,7 @@ include = [
 [profile.dev]
 # MCHPRS runs far too slow without any optimizations to even be usable for testing
 opt-level = 1
+incremental = true
 
 [profile.release]
 # This seems to speed up Redpiler compile times
